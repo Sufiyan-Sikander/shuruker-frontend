@@ -117,7 +117,12 @@ export function HomePage() {
               <div className="info-card">
                 <div className="card-inner">
                   <div className="icon">
-                    <svg width="34" height="34" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 20h16" stroke="url(#g5)" strokeWidth="2" strokeLinecap="round" /><defs><linearGradient id="g5" x1="0" x2="1"><stop offset="0" stopColor="#7b61ff" /><stop offset="1" stopColor="#ff6a5b" /></linearGradient></defs></svg>
+                    {/* Growth Roadmap: map/route icon */}
+                    <svg width="34" height="34" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M3 7l6-3 6 3 6-3v13l-6 3-6-3-6 3V7z" stroke="url(#g5)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                      <path d="M9 4v13M15 7v13" stroke="url(#g5)" strokeWidth="1.5" />
+                      <defs><linearGradient id="g5" x1="0" x2="1"><stop offset="0" stopColor="#7b61ff" /><stop offset="1" stopColor="#ff6a5b" /></linearGradient></defs>
+                    </svg>
                   </div>
                   <div className="meta">Growth Roadmap</div>
                   <div className="desc">A 30-day rollout plan with weekly milestones, KPIs, and quick wins to gain traction fast.</div>
@@ -149,7 +154,13 @@ export function HomePage() {
               <div className="info-card">
                 <div className="card-inner">
                   <div className="icon">
-                    <svg width="34" height="34" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5 12h14" stroke="url(#g8)" strokeWidth="2" strokeLinecap="round" /><defs><linearGradient id="g8" x1="0" x2="1"><stop offset="0" stopColor="#7b61ff" /><stop offset="1" stopColor="#ff6a5b" /></linearGradient></defs></svg>
+                    {/* Actionable Recommendations: checklist/clipboard icon */}
+                    <svg width="34" height="34" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <rect x="4" y="5" width="16" height="15" rx="2" stroke="url(#g8)" strokeWidth="1.5" />
+                      <path d="M8 3h8v4H8z" stroke="url(#g8)" strokeWidth="1.5" strokeLinejoin="round" />
+                      <path d="M9 12l2 2 4-4" stroke="url(#g8)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                      <defs><linearGradient id="g8" x1="0" x2="1"><stop offset="0" stopColor="#7b61ff" /><stop offset="1" stopColor="#ff6a5b" /></linearGradient></defs>
+                    </svg>
                   </div>
                   <div className="meta">Actionable Recommendations</div>
                   <div className="desc">Clear next steps and templates you can immediately use to move from idea to execution.</div>
