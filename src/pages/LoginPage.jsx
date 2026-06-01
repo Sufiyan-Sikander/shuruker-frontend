@@ -1,3 +1,4 @@
+import { apiUrl } from '../lib/api'
 import { useEffect, useState } from 'react'
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup } from 'firebase/auth'
 import { getFirebaseAuth, getGoogleProvider } from '../lib/firebase'
@@ -50,7 +51,7 @@ export function LoginPage() {
 
   const verifySession = async (user) => {
     const idToken = await user.getIdToken()
-    const response = await fetch('/verify-token', {
+    const response = await fetch(apiUrl('/verify-token'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ idToken }),

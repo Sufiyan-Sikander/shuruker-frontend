@@ -1,3 +1,4 @@
+import { apiUrl } from '../lib/api'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { onAuthStateChanged } from 'firebase/auth'
 import { BrandLogo } from '../components/BrandLogo'
@@ -121,7 +122,7 @@ export function ChatPage() {
   const loadConversations = async () => {
     setLoadingConversations(true)
     try {
-      const response = await fetch('/api/conversations')
+      const response = await fetch(apiUrl('/api/conversations'))
       const data = await response.json()
       if (response.ok && data.conversations) {
         setConversations(data.conversations)
@@ -153,7 +154,7 @@ export function ChatPage() {
 
   const loadConversation = async (conversationId) => {
     try {
-      const response = await fetch(`/api/conversations/${conversationId}/messages`)
+      const response = await fetch(apiUrl(`/api/conversations/${conversationId}/messages`))
       const data = await response.json()
       if (response.ok && data.messages) {
         setCurrentConversationId(conversationId)
@@ -176,7 +177,7 @@ export function ChatPage() {
   const createNewConversation = async (firstMessage = null) => {
     try {
       const title = firstMessage ? firstMessage.substring(0, 50) : 'New Chat'
-      const response = await fetch('/api/conversations/create', {
+      const response = await fetch(apiUrl('/api/conversations/create'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ title }),
@@ -199,7 +200,7 @@ export function ChatPage() {
     if (!window.confirm('Are you sure you want to delete this conversation?')) return
 
     try {
-      const response = await fetch(`/api/conversations/${conversationId}`, { method: 'DELETE' })
+      const response = await fetch(apiUrl(`/api/conversations/${conversationId}`), { method: 'DELETE' })
       if (response.ok) {
         if (conversationId === currentConversationId) {
           setCurrentConversationId(null)
@@ -240,7 +241,7 @@ export function ChatPage() {
     setTyping(true)
 
     try {
-      const response = await fetch('/api/chat', {
+      const response = await fetch(apiUrl('/api/chat'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
