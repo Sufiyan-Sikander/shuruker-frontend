@@ -6,10 +6,10 @@ export default defineConfig({
   server: {
     port: 5173,
     proxy: {
-      '/api': 'https://huggingface.co/spaces/sufiyansikander01/Shuruker-Backend',
-      '/verify-token': 'https://huggingface.co/spaces/sufiyansikander01/Shuruker-Backend',
-      '/data': 'https://huggingface.co/spaces/sufiyansikander01/Shuruker-Backend',
-      '/uploads': 'https://huggingface.co/spaces/sufiyansikander01/Shuruker-Backend'
+      '/api': 'https://sufiyansikander01-shuruker-backend.hf.space',
+      '/verify-token': 'https://sufiyansikander01-shuruker-backend.hf.space',
+      '/data': 'https://sufiyansikander01-shuruker-backend.hf.space',
+      '/uploads': 'https://sufiyansikander01-shuruker-backend.hf.space',
     }
   },
   define: {
