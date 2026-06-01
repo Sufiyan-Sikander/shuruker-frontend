@@ -3,7 +3,6 @@ import { getAuth, GoogleAuthProvider } from 'firebase/auth'
 
 export const firebaseConfig = {
   apiKey: 'AIzaSyBSSk5WF7gpbVvjUEDniiZCIN58hx3jzt8',
-  // ✅ Must be your Firebase project domain
   authDomain: 'shruker-77fd2.firebaseapp.com',
   projectId: 'shruker-77fd2',
   storageBucket: 'shruker-77fd2.firebasestorage.app',
