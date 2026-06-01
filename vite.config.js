@@ -6,13 +6,13 @@ export default defineConfig({
   server: {
     port: 5173,
     proxy: {
-      '/api': 'http://localhost:5000',
-      '/verify-token': 'http://localhost:5000',
-      '/data': 'http://localhost:5000',
-      '/uploads': 'http://localhost:5000'
+      '/api': 'https://huggingface.co/spaces/sufiyansikander01/Shuruker-Backend',
+      '/verify-token': 'https://huggingface.co/spaces/sufiyansikander01/Shuruker-Backend',
+      '/data': 'https://huggingface.co/spaces/sufiyansikander01/Shuruker-Backend',
+      '/uploads': 'https://huggingface.co/spaces/sufiyansikander01/Shuruker-Backend'
     }
   },
   define: {
-    'import.meta.env.VITE_API_URL': JSON.stringify(process.env.VITE_API_URL || 'http://localhost:5000')
+    'import.meta.env.VITE_API_URL': JSON.stringify(process.env.VITE_API_URL || '')
   }
 })

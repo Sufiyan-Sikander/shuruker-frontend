@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { signInWithEmailAndPassword, signInWithPopup } from 'firebase/auth'
 import { getFirebaseAuth, getGoogleProvider } from '../lib/firebase'
+import { apiUrl } from '../lib/api'
 
 export function FreelancerLoginPage() {
   const [email, setEmail] = useState('')
@@ -21,7 +22,7 @@ export function FreelancerLoginPage() {
   const verifyAndValidateFreelancer = async (user) => {
     const idToken = await user.getIdToken()
 
-    const verifyResponse = await fetch('/verify-token', {
+    const verifyResponse = await fetch(apiUrl('/verify-token'), {
       method: 'POST',
       credentials: 'include',                         // ← required for session cookie
       headers: { 'Content-Type': 'application/json' },
