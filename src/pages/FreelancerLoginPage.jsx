@@ -8,28 +8,22 @@ export function FreelancerLoginPage() {
   const [errorMessage, setErrorMessage] = useState('')
   const [loading, setLoading] = useState('')
 
-  const auth = useMemo(() => {
-    return getFirebaseAuth()
-  }, [])
-
-  const googleProvider = useMemo(() => {
-    return getGoogleProvider()
-  }, [])
+  const auth = useMemo(() => getFirebaseAuth(), [])
+  const googleProvider = useMemo(() => getGoogleProvider(), [])
 
   useEffect(() => {
     document.body.classList.add('freelancer-login-page')
     return () => document.body.classList.remove('freelancer-login-page')
   }, [])
 
-  const showError = (message) => {
-    setErrorMessage(message)
-  }
+  const showError = (message) => setErrorMessage(message)
 
   const verifyAndValidateFreelancer = async (user) => {
     const idToken = await user.getIdToken()
 
     const verifyResponse = await fetch('/verify-token', {
       method: 'POST',
+      credentials: 'include',                         // ← required for session cookie
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ idToken }),
     })
@@ -38,7 +32,9 @@ export function FreelancerLoginPage() {
       throw new Error('Session verification failed. Please try again.')
     }
 
-    const meResponse = await fetch('/api/me')
+    const meResponse = await fetch('/api/me', {
+      credentials: 'include',                         // ← required for session cookie
+    })
     const meData = await meResponse.json()
 
     if (!meResponse.ok) {

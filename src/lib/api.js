@@ -1,3 +1,5 @@
+// Always use relative URLs — Vercel proxy (vercel.json) forwards them to HuggingFace.
+// Never set VITE_API_URL in production; leave it empty.
 const BASE_URL = import.meta.env.VITE_API_URL || ''
 
 export function apiUrl(path) {

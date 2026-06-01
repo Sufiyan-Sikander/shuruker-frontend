@@ -79,7 +79,7 @@ export function DirectMessagesPage({ role = 'client' }) {
     let active = true
 
     const loadMe = async () => {
-      const response = await fetch('/api/me')
+      const response = await fetch('/api/me', { credentials: 'include' })
       if (response.status === 401) {
         window.location.replace('/login')
         return false
@@ -103,6 +103,7 @@ export function DirectMessagesPage({ role = 'client' }) {
 
       const response = await fetch('/api/dm/start', {
         method: 'POST',
+        credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ freelancerUid: queryFreelancerUid }),
       })
@@ -117,7 +118,7 @@ export function DirectMessagesPage({ role = 'client' }) {
     }
 
     const loadThreads = async () => {
-      const response = await fetch('/api/dm/threads')
+      const response = await fetch('/api/dm/threads', { credentials: 'include' })
       const data = await response.json()
 
       if (!response.ok) {
@@ -137,7 +138,7 @@ export function DirectMessagesPage({ role = 'client' }) {
       setThreadLoading(true)
 
       try {
-        const response = await fetch(`/api/dm/threads/${threadId}/messages`)
+        const response = await fetch(`/api/dm/threads/${threadId}/messages`, { credentials: 'include' })
         const data = await response.json()
 
         if (!response.ok) {
@@ -149,7 +150,7 @@ export function DirectMessagesPage({ role = 'client' }) {
         }
 
         setMessages(data.messages || [])
-        await fetch(`/api/dm/threads/${threadId}/seen`, { method: 'POST' })
+        await fetch(`/api/dm/threads/${threadId}/seen`, { method: 'POST', credentials: 'include' })
         messagesRef.current?.scrollTo({ top: messagesRef.current.scrollHeight, behavior: 'smooth' })
       } finally {
         setThreadLoading(false)
@@ -222,7 +223,7 @@ export function DirectMessagesPage({ role = 'client' }) {
     setActiveThreadId(threadId)
 
     try {
-      const response = await fetch(`/api/dm/threads/${threadId}/messages`)
+      const response = await fetch(`/api/dm/threads/${threadId}/messages`, { credentials: 'include' })
       const data = await response.json()
 
       if (!response.ok) {
@@ -230,9 +231,9 @@ export function DirectMessagesPage({ role = 'client' }) {
       }
 
       setMessages(data.messages || [])
-      await fetch(`/api/dm/threads/${threadId}/seen`, { method: 'POST' })
+      await fetch(`/api/dm/threads/${threadId}/seen`, { method: 'POST', credentials: 'include' })
 
-      const refreshed = await fetch('/api/dm/threads')
+      const refreshed = await fetch('/api/dm/threads', { credentials: 'include' })
       const refreshedData = await refreshed.json()
       if (refreshed.ok) setThreads(refreshedData.threads || [])
     } catch (error) {
@@ -248,6 +249,7 @@ export function DirectMessagesPage({ role = 'client' }) {
 
     const response = await fetch(`/api/dm/threads/${activeThreadId}/messages`, {
       method: 'POST',
+      credentials: 'include',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ text: value }),
     })

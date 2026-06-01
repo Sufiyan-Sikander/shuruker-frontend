@@ -21,7 +21,7 @@ export function RegisterFreelancerPage() {
   useEffect(() => {
     const loadUser = async () => {
       try {
-        const response = await fetch('/api/me')
+        const response = await fetch('/api/me', { credentials: 'include' })
         if (response.ok) {
           const user = await response.json()
           if (user.email) {
@@ -145,6 +145,7 @@ export function RegisterFreelancerPage() {
 
       const response = await fetch('/api/register-freelancer', {
         method: 'POST',
+        credentials: 'include',
         body: formData,
       })
 

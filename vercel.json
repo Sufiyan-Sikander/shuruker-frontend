@@ -1,3 +1,24 @@
 {
-  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "https://huggingface.co/spaces/sufiyansikander01/Shuruker-Backend/api/$1"
+    },
+    {
+      "source": "/verify-token",
+      "destination": "https://huggingface.co/spaces/sufiyansikander01/Shuruker-Backend/verify-token"
+    },
+    {
+      "source": "/data/(.*)",
+      "destination": "https://huggingface.co/spaces/sufiyansikander01/Shuruker-Backend/data/$1"
+    },
+    {
+      "source": "/uploads/(.*)",
+      "destination": "https://huggingface.co/spaces/sufiyansikander01/Shuruker-Backend/uploads/$1"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
 }
