@@ -499,5 +499,4 @@ export function LoginPage() {
       </div>
     </>
   )
-} 
- 
+}
