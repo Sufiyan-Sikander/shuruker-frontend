@@ -23,8 +23,8 @@ export function HomePage() {
             <span></span><span></span><span></span>
           </button>
           <nav className={`nav-links${menuOpen ? ' mobile-open' : ''}`}>
-            <a href="#features" onClick={() => setMenuOpen(false)}>Features</a>
-            <a href="#solution" onClick={() => setMenuOpen(false)}>Solution</a>
+            <a href="#features" onClick={(e) => { e.preventDefault(); document.getElementById('features')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); setMenuOpen(false) }}>Features</a>
+            <a href="#solution" onClick={(e) => { e.preventDefault(); document.getElementById('solution')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); setMenuOpen(false) }}>Solution</a>
             <a href="/explore" onClick={() => setMenuOpen(false)}>Explore</a>
             <ServicesDropdown />
             <a className="signin" href="/login" onClick={() => setMenuOpen(false)}>Sign In</a>
@@ -189,7 +189,7 @@ export function HomePage() {
           </div>
         </section>
 
-        <section className="use-cases">
+        <section id="solution" className="use-cases">
           <div className="container">
             <h2>Use Cases by Industry</h2>
             <p className="use-cases-lead">See how ShurukerAi helps different businesses plan smarter and launch faster.</p>
