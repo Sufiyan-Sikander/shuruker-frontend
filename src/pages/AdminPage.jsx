@@ -1,23 +1,25 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 
 const pageStyles = `
-/* admin page styles copied from template */
+*{box-sizing:border-box}
 .admin-container{min-height:100vh;background:#f5f5f5}
 .admin-header{background:linear-gradient(135deg,#7b61ff,#ff6a5b);color:#fff;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,0.1)}
-.admin-header-inner{max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center}
+.admin-header-inner{max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
 .admin-title h1{font-size:24px;font-weight:700;margin:0}.admin-title p{font-size:13px;opacity:.9;margin:4px 0 0}
-.logout-btn{background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.3);padding:8px 16px;border-radius:6px;cursor:pointer;font-size:13px;font-weight:600}
+.logout-btn{background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.3);padding:8px 16px;border-radius:6px;cursor:pointer;font-size:13px;font-weight:600;white-space:nowrap}
 .admin-content{max-width:1200px;margin:40px auto;padding:0 20px}
 .login-container{max-width:400px;margin:100px auto;background:#fff;border-radius:12px;padding:40px;box-shadow:0 4px 6px rgba(0,0,0,.07)}
 .login-header{text-align:center;margin-bottom:30px}.login-header h2{font-size:24px;font-weight:700;margin-bottom:8px;color:#1a1a1a}.login-header p{color:#888;font-size:14px}
 .form-group{margin-bottom:20px}.form-group label{display:block;font-weight:600;margin-bottom:8px;color:#1a1a1a;font-size:14px}
-.form-group input{width:100%;padding:12px 14px;border:1px solid #ddd;border-radius:8px;font-size:14px}
+.form-group input{width:100%;padding:12px 14px;border:1px solid #ddd;border-radius:8px;font-size:14px;box-sizing:border-box}
 .login-btn{width:100%;padding:12px;background:linear-gradient(135deg,#7b61ff,#ff6a5b);color:#fff;border:none;border-radius:8px;font-weight:600;cursor:pointer}
 .error-message{display:none;padding:12px;background:#fef2f2;border:1px solid #fdaba7;border-radius:6px;color:#7a2424;font-size:13px;margin-bottom:20px}
+
 .freelancers-table{background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.08);display:none}
 .freelancers-table.active{display:block}
-.table-header{background:#f9f9f9;padding:16px 20px;border-bottom:1px solid #eee;display:grid;grid-template-columns:1.2fr 1fr 1fr .8fr 1fr 1fr;gap:16px;font-size:13px;font-weight:600;color:#888}
-.table-row{padding:16px 20px;border-bottom:1px solid #eee;display:grid;grid-template-columns:1.2fr 1fr 1fr .8fr 1fr 1fr;gap:16px;align-items:center}
+.table-scroll-wrapper{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.table-header{background:#f9f9f9;padding:16px 20px;border-bottom:1px solid #eee;display:grid;grid-template-columns:1.2fr 1fr 1fr .8fr 1fr 1fr;gap:16px;font-size:13px;font-weight:600;color:#888;min-width:620px}
+.table-row{padding:16px 20px;border-bottom:1px solid #eee;display:grid;grid-template-columns:1.2fr 1fr 1fr .8fr 1fr 1fr;gap:16px;align-items:center;min-width:620px}
 .freelancer-name{font-weight:600;color:#1a1a1a;font-size:14px}
 .freelancer-email{color:#666;font-size:13px}
 .category-badge{display:inline-block;background:rgba(123,97,255,.1);color:#7b61ff;padding:4px 10px;border-radius:4px;font-size:12px;font-weight:600}
@@ -28,30 +30,45 @@ const pageStyles = `
 .empty-state{text-align:center;padding:60px 20px;color:#888}
 .spinner{display:inline-block;width:30px;height:30px;border:2px solid rgba(123,97,255,.3);border-top-color:#7b61ff;border-radius:50%;animation:spin .8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px;margin-bottom:40px}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:20px;margin-bottom:40px}
 .stat-card{background:#fff;border-radius:12px;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
 .stat-label{font-size:13px;color:#888;margin-bottom:8px;font-weight:600}
 .stat-value{font-size:32px;font-weight:700;color:#1a1a1a}
-.modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);z-index:1000;align-items:center;justify-content:center}
+
+.modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);z-index:1000;align-items:center;justify-content:center;padding:16px}
 .modal.active{display:flex}
-.modal-content{background:#fff;border-radius:12px;padding:40px;max-width:600px;width:90%;max-height:80vh;overflow-y:auto}
-.modal-content{background:#fff;border-radius:12px;padding:24px;max-width:760px;width:94%;max-height:82vh;overflow-y:auto;overflow-x:hidden;box-sizing:border-box}
+.modal-content{background:#fff;border-radius:12px;padding:24px;max-width:760px;width:100%;max-height:90vh;overflow-y:auto;overflow-x:hidden;box-sizing:border-box}
 .modal-header{font-size:20px;font-weight:700;margin-bottom:20px;color:#1a1a1a}
-.modal-actions{display:flex;gap:12px;justify-content:flex-end}
-.modal-actions{display:flex;gap:12px;justify-content:flex-start;flex-wrap:wrap}
-.modal-btn{padding:10px 20px;border:none;border-radius:6px;font-weight:600;cursor:pointer}
-.modal-btn{padding:10px 16px;border:none;border-radius:8px;font-weight:600;cursor:pointer;min-width:110px}
+.modal-actions{display:flex;gap:10px;justify-content:flex-start;flex-wrap:wrap;margin-top:20px}
+.modal-btn{padding:10px 16px;border:none;border-radius:8px;font-weight:600;cursor:pointer;min-width:100px;font-size:13px}
 .modal-btn-approve{background:#1a5a3e;color:#fff}
 .modal-btn-reject{background:#7a2424;color:#fff}
 .modal-btn-close{background:#fff;border:1px solid #ddd;color:#1a1a1a}
 .modal-btn-remove{background:#f3f4f6;color:#111;border:1px solid #e5e7eb}
 .modal-btn-restore{background:#f3f4f6;color:#111;border:1px solid #e5e7eb}
 .modal-btn-delete{background:#f3f4f6;color:#111;border:1px solid #e5e7eb}
-
 .modal-body{overflow-wrap:break-word;word-break:break-word}
 .modal-field{margin-bottom:12px}
 .modal-field-label{font-weight:700;color:#222;margin-bottom:6px}
 .modal-field-value{color:#333}
+
+.section-toolbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px}
+.filter-group{display:flex;align-items:center;gap:8px;font-size:13px;color:#555}
+.status-filter-select{padding:6px 10px;border:1px solid #ddd;border-radius:6px;font-size:13px;background:#fff;cursor:pointer}
+.admin-section-title{font-size:18px;font-weight:700;color:#1a1a1a}
+
+@media (max-width:640px){
+  .admin-content{padding:0 12px;margin:24px auto}
+  .login-container{margin:40px auto;padding:28px 20px}
+  .stat-value{font-size:24px}
+  .modal-content{padding:20px 16px}
+  .modal-btn{min-width:unset;flex:1 1 calc(50% - 5px)}
+  .modal-btn-close{flex:1 1 100%}
+}
+
+@media (max-width:400px){
+  .modal-btn{flex:1 1 100%}
+}
 `
 
 export default function AdminPage() {
@@ -170,7 +187,7 @@ export default function AdminPage() {
               </form>
             </div>
           ) : (
-            <div className={`dashboard active`}>
+            <div className="dashboard active">
               <div className="stats-grid">
                 <div className="stat-card"><div className="stat-label">Pending Applications</div><div className="stat-value">{stats.pending || 0}</div></div>
                 <div className="stat-card"><div className="stat-label">Approved Freelancers</div><div className="stat-value">{stats.approved || 0}</div></div>
@@ -180,7 +197,7 @@ export default function AdminPage() {
 
               <div>
                 <div className="section-toolbar">
-                  <h2 className="admin-section-title" style={{ marginBottom: 0 }}>Freelancer Profiles</h2>
+                  <h2 className="admin-section-title">Freelancer Profiles</h2>
                   <div className="filter-group">
                     <label htmlFor="statusFilter">Filter:</label>
                     <select id="statusFilter" className="status-filter-select" value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
@@ -196,28 +213,30 @@ export default function AdminPage() {
                 </div>
 
                 <div id="freelancersTable" className={`freelancers-table ${filtered.length ? 'active' : ''}`}>
-                  <div className="table-header">
-                    <div>Name & Email</div>
-                    <div>Category</div>
-                    <div>Bio</div>
-                    <div>Status</div>
-                    <div>Portfolio</div>
-                    <div>Actions</div>
-                  </div>
-                  <div id="tableContent">
-                    {filtered.map((f, idx) => (
-                      <div key={f.id} className="table-row">
-                        <div>
-                          <div className="freelancer-name">{f.fullName}</div>
-                          <div className="freelancer-email">{f.email}</div>
+                  <div className="table-scroll-wrapper">
+                    <div className="table-header">
+                      <div>Name & Email</div>
+                      <div>Category</div>
+                      <div>Bio</div>
+                      <div>Status</div>
+                      <div>Portfolio</div>
+                      <div>Actions</div>
+                    </div>
+                    <div id="tableContent">
+                      {filtered.map((f) => (
+                        <div key={f.id} className="table-row">
+                          <div>
+                            <div className="freelancer-name">{f.fullName}</div>
+                            <div className="freelancer-email">{f.email}</div>
+                          </div>
+                          <div><span className="category-badge">{f.category || 'N/A'}</span></div>
+                          <div style={{ fontSize: 13, color: '#555', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{(f.bio || '').substring(0, 50)}{(f.bio || '').length > 50 ? '...' : ''}</div>
+                          <div><span className={`status-badge status-${f.status || 'pending'}`}>{(f.status || 'pending').charAt(0).toUpperCase() + (f.status || 'pending').slice(1)}</span></div>
+                          <div>{f.portfolioPdfUrl ? <a href={f.portfolioPdfUrl} target="_blank" rel="noreferrer" style={{ color: '#7b61ff', textDecoration: 'none', fontSize: 13, fontWeight: 600 }}>📄 PDF</a> : <span style={{ color: '#ccc', fontSize: 13 }}>N/A</span>}</div>
+                          <div className="action-buttons"><button className="btn-action btn-view" onClick={() => openModal(f)}>View</button></div>
                         </div>
-                        <div><span className="category-badge">{f.category || 'N/A'}</span></div>
-                        <div style={{ fontSize: 13, color: '#555', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{(f.bio || '').substring(0, 50)}{(f.bio || '').length > 50 ? '...' : ''}</div>
-                        <div><span className={`status-badge status-${f.status || 'pending'}`}>{(f.status || 'pending').charAt(0).toUpperCase() + (f.status || 'pending').slice(1)}</span></div>
-                        <div>{f.portfolioPdfUrl ? <a href={f.portfolioPdfUrl} target="_blank" rel="noreferrer" style={{ color: '#7b61ff', textDecoration: 'none', fontSize: 13, fontWeight: 600 }}>📄 PDF</a> : <span style={{ color: '#ccc', fontSize: 13 }}>N/A</span>}</div>
-                        <div className="action-buttons"><button className="btn-action btn-view" onClick={() => openModal(f)}>View</button></div>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
                   </div>
                 </div>
 
