@@ -1,6 +1,8 @@
+import { useState } from 'react'
 import { BrandLogo } from '../components/BrandLogo'
 import ServicesDropdown from '../components/ServicesDropdown'
 export function HomePage() {
+  const [menuOpen, setMenuOpen] = useState(false)
   return (
     <div className="page-shell home-page">
       <header className="nav">
@@ -13,13 +15,20 @@ export function HomePage() {
             </div>
           </a>
 
-          <nav className="nav-links">
-            <a href="#features">Features</a>
-            <a href="#solution">Solution</a>
-            <a href="/explore">Explore</a>
+          <button
+            className={`hamburger${menuOpen ? ' open' : ''}`}
+            aria-label="Toggle menu"
+            onClick={() => setMenuOpen(!menuOpen)}
+          >
+            <span></span><span></span><span></span>
+          </button>
+          <nav className={`nav-links${menuOpen ? ' mobile-open' : ''}`}>
+            <a href="#features" onClick={() => setMenuOpen(false)}>Features</a>
+            <a href="#solution" onClick={() => setMenuOpen(false)}>Solution</a>
+            <a href="/explore" onClick={() => setMenuOpen(false)}>Explore</a>
             <ServicesDropdown />
-            <a className="signin" href="/login">Sign In</a>
-            <a className="signup" href="/start">Sign Up</a>
+            <a className="signin" href="/login" onClick={() => setMenuOpen(false)}>Sign In</a>
+            <a className="signup" href="/start" onClick={() => setMenuOpen(false)}>Sign Up</a>
           </nav>
         </div>
       </header>

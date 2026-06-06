@@ -17,13 +17,16 @@ const pageStyles = `
 .chat-sub{margin-top:3px;color:#666;font-size:13px}
 .msgs{flex:1;padding:14px;overflow:auto;background:#fcfcff}
 .row{display:flex;margin-bottom:10px}.row.me{justify-content:flex-end}
-.bubble{max-width:76%;padding:10px 12px;border-radius:12px;font-size:14px;line-height:1.45}
+.row.me>div.msg-wrapper{display:flex;flex-direction:column;align-items:flex-end;max-width:72%}
+.row.other>div.msg-wrapper{display:flex;flex-direction:column;align-items:flex-start;max-width:72%}
+.bubble{width:max-content;max-width:100%;padding:10px 14px;border-radius:12px;font-size:14px;line-height:1.5;white-space:normal;word-break:normal;overflow-wrap:break-word}
 .row.me .bubble{background:linear-gradient(135deg,#7b61ff,#ff6a5b);color:#fff;border-bottom-right-radius:4px}
 .row.other .bubble{background:#fff;color:#111827;border:1px solid #ececec;border-bottom-left-radius:4px}
 .msg-time{font-size:11px;color:#999;margin-top:4px}
-.composer{display:flex;gap:10px;padding:12px;border-top:1px solid #ececec}
-.composer input{flex:1;border:1px solid #ddd;border-radius:10px;padding:11px 12px;font-family:inherit}
-.composer button{border:none;border-radius:10px;padding:0 16px;color:#fff;font-weight:700;background:linear-gradient(135deg,#7b61ff,#ff6a5b);cursor:pointer}
+.row.me .msg-time{text-align:right}
+.composer{display:flex;gap:10px;padding:12px;border-top:1px solid #ececec;align-items:center}
+.composer input{flex:1;border:1px solid #ddd;border-radius:10px;padding:11px 12px;font-family:inherit;font-size:14px}
+.composer button{border:none;border-radius:10px;padding:11px 20px;height:44px;color:#fff;font-weight:700;font-size:14px;background:linear-gradient(135deg,#7b61ff,#ff6a5b);cursor:pointer;white-space:nowrap;flex-shrink:0}
 .empty{display:flex;align-items:center;justify-content:center;min-height:280px;color:#666;text-align:center;padding:18px}
 @media(max-width:920px){.dm-grid{grid-template-columns:1fr}.threads{max-height:260px}.chat{min-height:58vh}}
 `
@@ -189,6 +192,35 @@ export function DirectMessagesPage({ role = 'client' }) {
     messagesRef.current?.scrollTo({ top: messagesRef.current.scrollHeight, behavior: 'smooth' })
   }, [messages])
 
+  // Real-time polling: fetch new messages every 3 seconds when a thread is open
+  useEffect(() => {
+    if (!activeThreadId) return
+
+    const poll = async () => {
+      try {
+        const response = await fetch(`/api/dm/threads/${activeThreadId}/messages`, { credentials: 'include' })
+        if (!response.ok) return
+        const data = await response.json()
+        const incoming = data.messages || []
+        setMessages((prev) => {
+          if (incoming.length !== prev.length) return incoming
+          return prev
+        })
+        // Also refresh thread list (unread counts, last message preview)
+        const threadsRes = await fetch('/api/dm/threads', { credentials: 'include' })
+        if (threadsRes.ok) {
+          const threadsData = await threadsRes.json()
+          setThreads(threadsData.threads || [])
+        }
+      } catch (_) {
+        // silently ignore polling errors
+      }
+    }
+
+    const interval = setInterval(poll, 3000)
+    return () => clearInterval(interval)
+  }, [activeThreadId])
+
   const renderThreads = () => {
     if (!threads.length) {
       return <div className="empty">No conversations found yet.</div>
@@ -311,7 +343,7 @@ export function DirectMessagesPage({ role = 'client' }) {
                   const mine = message.senderId === currentUser?.uid
                   return (
                     <div key={message.id} className={`row ${mine ? 'me' : 'other'}`}>
-                      <div>
+                      <div className="msg-wrapper">
                         <div className="bubble" dangerouslySetInnerHTML={{ __html: escapeHtml(message.text).replace(/\n/g, '<br>') }} />
                         <div className="msg-time">{formatTime(message.createdAt)}</div>
                       </div>
