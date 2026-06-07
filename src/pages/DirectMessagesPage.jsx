@@ -29,6 +29,7 @@ const pageStyles = `
 .composer button{border:none;border-radius:10px;padding:11px 20px;height:44px;color:#fff;font-weight:700;font-size:14px;background:linear-gradient(135deg,#7b61ff,#ff6a5b);cursor:pointer;white-space:nowrap;flex-shrink:0}
 .empty{display:flex;align-items:center;justify-content:center;min-height:280px;color:#666;text-align:center;padding:18px}
 @media(max-width:920px){.dm-grid{grid-template-columns:1fr}.threads{max-height:260px}.chat{min-height:58vh}}
+@keyframes badgePop{from{transform:scale(0.5);opacity:0}to{transform:scale(1);opacity:1}}
 `
 
 function escapeHtml(text) {
@@ -322,22 +323,24 @@ export function DirectMessagesPage({ role = 'client' }) {
           <nav className="nav-links">
             <a href="/chat">AI Chat</a>
             <a href="/freelancers">Find Freelancer</a>
-            <a href={isFreelancer ? '/freelancer-inbox' : '/client-messages'} style={{ position: 'relative' }}>
+            <a href={isFreelancer ? '/freelancer-inbox' : '/client-messages'} style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
               {pageTitle}
               {unreadCount > 0 && (
                 <span style={{
-                  position: 'absolute',
-                  top: '-7px',
-                  right: '-12px',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
                   background: 'linear-gradient(135deg, #7b61ff, #ff6a5b)',
                   color: '#fff',
                   fontSize: '10px',
                   fontWeight: '700',
                   lineHeight: 1,
-                  padding: '3px 5px',
+                  padding: '3px 6px',
                   borderRadius: '999px',
-                  minWidth: '16px',
-                  textAlign: 'center',
+                  minWidth: '18px',
+                  height: '18px',
+                  boxShadow: '0 2px 6px rgba(123,97,255,0.4)',
+                  animation: 'badgePop 0.3s ease',
                 }}>
                   {unreadCount > 99 ? '99+' : unreadCount}
                 </span>
