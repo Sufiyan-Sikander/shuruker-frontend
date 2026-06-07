@@ -64,6 +64,7 @@ export function DirectMessagesPage({ role = 'client' }) {
   const [loading, setLoading] = useState(true)
   const [threadLoading, setThreadLoading] = useState(false)
   const [pageError, setPageError] = useState('')
+  const [unreadCount, setUnreadCount] = useState(0)
   const messagesRef = useRef(null)
   const composerRef = useRef(null)
 
@@ -221,6 +222,12 @@ export function DirectMessagesPage({ role = 'client' }) {
     return () => clearInterval(interval)
   }, [activeThreadId])
 
+  // Recalculate unread count whenever threads update
+  useEffect(() => {
+    const total = threads.reduce((sum, thread) => sum + (thread.unreadCount || 0), 0)
+    setUnreadCount(total)
+  }, [threads])
+
   const renderThreads = () => {
     if (!threads.length) {
       return <div className="empty">No conversations found yet.</div>
@@ -315,7 +322,27 @@ export function DirectMessagesPage({ role = 'client' }) {
           <nav className="nav-links">
             <a href="/chat">AI Chat</a>
             <a href="/freelancers">Find Freelancer</a>
-            <a href={isFreelancer ? '/freelancer-inbox' : '/client-messages'}>{pageTitle}</a>
+            <a href={isFreelancer ? '/freelancer-inbox' : '/client-messages'} style={{ position: 'relative' }}>
+              {pageTitle}
+              {unreadCount > 0 && (
+                <span style={{
+                  position: 'absolute',
+                  top: '-7px',
+                  right: '-12px',
+                  background: 'linear-gradient(135deg, #7b61ff, #ff6a5b)',
+                  color: '#fff',
+                  fontSize: '10px',
+                  fontWeight: '700',
+                  lineHeight: 1,
+                  padding: '3px 5px',
+                  borderRadius: '999px',
+                  minWidth: '16px',
+                  textAlign: 'center',
+                }}>
+                  {unreadCount > 99 ? '99+' : unreadCount}
+                </span>
+              )}
+            </a>
             <a className="signup" href="/logout">Logout</a>
           </nav>
         </div>
