@@ -309,6 +309,7 @@ export function ChatPage() {
 
   return (
     <div className="page-shell chat-page">
+      <style>{`@keyframes badgePop{from{transform:scale(0.5);opacity:0}to{transform:scale(1);opacity:1}}`}</style>
       <div className="chat-bg-decor">
         <div className="decor-blob blob-1"></div>
         <div className="decor-blob blob-2"></div>
@@ -335,22 +336,24 @@ export function ChatPage() {
 
           <nav className={`nav-links${menuOpen ? ' mobile-open' : ''}`}>
             <ServicesDropdown />
-            <a id="messagesLink" href="/client-messages" onClick={() => setMenuOpen(false)} style={{ position: 'relative' }}>
+            <a id="messagesLink" href="/client-messages" onClick={() => setMenuOpen(false)} style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
               Inbox
               {unreadCount > 0 && (
                 <span style={{
-                  position: 'absolute',
-                  top: '-7px',
-                  right: '-12px',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
                   background: 'linear-gradient(135deg, #7b61ff, #ff6a5b)',
                   color: '#fff',
                   fontSize: '10px',
                   fontWeight: '700',
                   lineHeight: 1,
-                  padding: '3px 5px',
+                  padding: '3px 6px',
                   borderRadius: '999px',
-                  minWidth: '16px',
-                  textAlign: 'center',
+                  minWidth: '18px',
+                  height: '18px',
+                  boxShadow: '0 2px 6px rgba(123,97,255,0.4)',
+                  animation: 'badgePop 0.3s ease',
                 }}>
                   {unreadCount > 99 ? '99+' : unreadCount}
                 </span>
