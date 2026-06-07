@@ -74,12 +74,34 @@ export function ChatPage() {
   const [conversationHistory, setConversationHistory] = useState([])
   const [input, setInput] = useState('')
   const [typing, setTyping] = useState(false)
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const [contextVisible, setContextVisible] = useState(false)
   const [contextCount, setContextCount] = useState('0 msgs')
   const [loadingConversations, setLoadingConversations] = useState(true)
+  const [menuOpen, setMenuOpen] = useState(false)
+  const [unreadCount, setUnreadCount] = useState(0)
   const messagesEndRef = useRef(null)
   const chatMessagesRef = useRef(null)
+
+  // Poll for unread inbox messages every 15 seconds
+  useEffect(() => {
+    if (!ready) return
+
+    const fetchUnread = async () => {
+      try {
+        const response = await fetch('/api/dm/threads', { credentials: 'include' })
+        if (!response.ok) return
+        const data = await response.json()
+        const total = (data.threads || []).reduce((sum, thread) => sum + (thread.unreadCount || 0), 0)
+        setUnreadCount(total)
+      } catch (_) {
+        // silently ignore
+      }
+    }
+
+    fetchUnread()
+    const interval = setInterval(fetchUnread, 15000)
+    return () => clearInterval(interval)
+  }, [ready])
 
   useEffect(() => {
     document.body.classList.add('chat-page')
@@ -302,72 +324,47 @@ export function ChatPage() {
               <small className="brand-slogan">Pakistan's Smart Business Launch Partner</small>
             </div>
           </a>
-          <nav className="nav-links">
+
+          <button
+            className={`hamburger${menuOpen ? ' open' : ''}`}
+            aria-label="Toggle menu"
+            onClick={() => setMenuOpen(!menuOpen)}
+          >
+            <span></span><span></span><span></span>
+          </button>
+
+          <nav className={`nav-links${menuOpen ? ' mobile-open' : ''}`}>
             <ServicesDropdown />
-            <a id="messagesLink" href="/client-messages">Inbox</a>
-            <a className="signup" href="/logout">Logout</a>
+            <a id="messagesLink" href="/client-messages" onClick={() => setMenuOpen(false)} style={{ position: 'relative' }}>
+              Inbox
+              {unreadCount > 0 && (
+                <span style={{
+                  position: 'absolute',
+                  top: '-7px',
+                  right: '-12px',
+                  background: 'linear-gradient(135deg, #7b61ff, #ff6a5b)',
+                  color: '#fff',
+                  fontSize: '10px',
+                  fontWeight: '700',
+                  lineHeight: 1,
+                  padding: '3px 5px',
+                  borderRadius: '999px',
+                  minWidth: '16px',
+                  textAlign: 'center',
+                }}>
+                  {unreadCount > 99 ? '99+' : unreadCount}
+                </span>
+              )}
+            </a>
+            <a className="signup" href="/logout" onClick={() => setMenuOpen(false)}>Logout</a>
           </nav>
         </div>
       </header>
 
       <main className="chat-container">
-        <aside className={`conversation-sidebar${sidebarCollapsed ? ' collapsed' : ''}`} id="conversationSidebar">
-          <div className="sidebar-header">
-            <h3>Chat History</h3>
-            <button className="new-chat-btn" id="newChatBtn" title="Start New Chat" type="button" onClick={() => createNewConversation()}>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12 5v14M5 12h14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-              </svg>
-            </button>
-          </div>
-          <div className="conversations-list" id="conversationsList">
-            {loadingConversations ? (
-              <div className="loading-conversations">Loading conversations...</div>
-            ) : conversations.length === 0 ? (
-              <div className="no-conversations">No conversations yet. Start a new chat!</div>
-            ) : (
-              conversations.map((conversation) => (
-                <div
-                  key={conversation.id}
-                  className={`conversation-item${conversation.id === currentConversationId ? ' active' : ''}`}
-                  data-id={conversation.id}
-                  onClick={() => loadConversation(conversation.id)}
-                >
-                  <div className="conversation-header">
-                    <h4 className="conversation-title">{conversation.title}</h4>
-                    <button
-                      className="delete-conversation-btn"
-                      data-id={conversation.id}
-                      title="Delete"
-                      type="button"
-                      onClick={(event) => {
-                        event.stopPropagation()
-                        deleteConversation(conversation.id)
-                      }}
-                    >
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M6 18L18 6M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-                      </svg>
-                    </button>
-                  </div>
-                  <div className="conversation-meta">
-                    <span className="message-count">{conversation.messageCount || 0} messages</span>
-                    <span className="conversation-time">{formatTimestamp(conversation.updatedAt)}</span>
-                  </div>
-                </div>
-              ))
-            )}
-          </div>
-        </aside>
-
         <div className="chat-wrapper">
           <div className="chat-header">
             <div className="chat-header-left">
-              <button className="sidebar-toggle" id="sidebarToggle" title="Toggle Sidebar" type="button" onClick={() => setSidebarCollapsed((current) => !current)}>
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M3 12h18M3 6h18M3 18h18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-                </svg>
-              </button>
               <div className="chat-avatar-large">
                 <div className="avatar-gradient">S</div>
                 <div className="status-indicator"></div>
